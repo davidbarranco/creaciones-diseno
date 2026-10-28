@@ -2,6 +2,9 @@
 // Importa bcrypt para generar y verificar hashes de contraseñas.
 const bcrypt = require("bcrypt");
 
+// Importa jsonwebtoken para generar tokens de autenticación.
+const jwt = require("jsonwebtoken");
+
 // Importa el repositorio que contiene las operaciones de acceso a usuarios.
 const usuarioRepository = require("../repositories/usuario.repository");
 
@@ -53,6 +56,81 @@ const authService = {
             apellido: usuarioCreado.apellido,
             correo: usuarioCreado.correo,
             fechaCreacion: usuarioCreado.fechaCreacion
+        };
+    },
+
+    // Inicia sesión verificando las credenciales del usuario.
+    async iniciarSesion(datosUsuario) {
+
+        // Busca en la base de datos la cuenta asociada al correo recibido.
+        const usuario = await usuarioRepository.buscarPorCorreo(
+            datosUsuario.correo
+        );
+
+        // Si el usuario no existe, rechaza las credenciales.
+        if (!usuario) {
+            const error = new Error("Correo electrónico o contraseña incorrectos.");
+
+            // Asigna un código para que el controlador responda con HTTP 401.
+            error.code = "CREDENCIALES_INVALIDAS";
+
+            // Detiene el proceso de inicio de sesión.
+            throw error;
+        }
+
+        // Compara la contraseña recibida con el hash guardado en MySQL.
+        const passwordCorrecta = await bcrypt.compare(
+            datosUsuario.password,
+            usuario.password
+        );
+
+        // Si la contraseña no coincide, rechaza las credenciales.
+        if (!passwordCorrecta) {
+            const error = new Error("Correo electrónico o contraseña incorrectos.");
+
+            // Utiliza el mismo código tanto si el correo existe como si no.
+            error.code = "CREDENCIALES_INVALIDAS";
+
+            // Detiene el proceso de inicio de sesión.
+            throw error;
+        }
+
+        // Comprueba que la clave secreta JWT esté configurada.
+        if (!process.env.JWT_SECRET) {
+            const error = new Error("La clave secreta de JWT no está configurada.");
+
+            // Identifica un problema de configuración del servidor.
+            error.code = "JWT_SECRET_NO_CONFIGURADA";
+
+            // Evita generar un token sin la clave secreta.
+            throw error;
+        }
+
+        // Genera un token firmado que identifica al usuario autenticado.
+        const token = jwt.sign(
+            {
+                sub: String(usuario.id)
+            },
+            process.env.JWT_SECRET,
+            {
+                algorithm: "HS256",
+                expiresIn: "1h"
+            }
+        );
+
+        // Devuelve el token y los datos públicos de la cuenta.
+        // Nunca devuelve la contraseña ni el hash almacenado.
+        return {
+            token: token,
+            tipoToken: "Bearer",
+            expiraEn: 3600,
+            usuario: {
+                id: usuario.id,
+                nombre: usuario.nombre,
+                apellido: usuario.apellido,
+                correo: usuario.correo,
+                fechaCreacion: usuario.fechaCreacion
+            }
         };
     }
 };
