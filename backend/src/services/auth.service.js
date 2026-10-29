@@ -1,125 +1,144 @@
-
-// Importa bcrypt para generar y verificar hashes de contraseñas.
+// Importa bcrypt para cifrar contraseñas y verificar credenciales.
 const bcrypt = require("bcrypt");
 
-// Importa jsonwebtoken para generar tokens de autenticación.
+// Importa jsonwebtoken para generar los tokens de autenticación.
 const jwt = require("jsonwebtoken");
 
-// Importa el repositorio que contiene las operaciones de acceso a usuarios.
+// Importa el repositorio encargado de consultar y guardar usuarios.
 const usuarioRepository = require("../repositories/usuario.repository");
 
-// Define las operaciones y reglas de negocio de la autenticación.
+// Define los servicios relacionados con el registro y la autenticación.
 const authService = {
 
-    // Registra un usuario nuevo después de comprobar sus datos básicos.
+    // Registra un nuevo usuario en la base de datos.
     async registrarUsuario(datosUsuario) {
 
-        // Busca si ya existe una cuenta asociada al correo recibido.
+        // Busca si ya existe un usuario con el correo proporcionado.
         const usuarioExistente = await usuarioRepository.buscarPorCorreo(
             datosUsuario.correo
         );
 
-        // Impide registrar otra cuenta con un correo que ya está registrado.
+        // Evita registrar dos usuarios con el mismo correo electrónico.
         if (usuarioExistente) {
-            const error = new Error("El correo electrónico ya está registrado.");
 
-            // Asigna un código que posteriormente podrá interpretar el controlador.
+            // Crea un error que el controlador puede identificar.
+            const error = new Error(
+                "El correo electrónico ya está registrado."
+            );
+
+            // Asigna un código para identificar el conflicto.
             error.code = "CORREO_DUPLICADO";
 
-            // Detiene el registro y comunica el motivo del rechazo.
+            // Propaga el error para que lo gestione el controlador.
             throw error;
         }
 
-        // Genera un hash de la contraseña original antes de guardarla.
-        const passwordHash = await bcrypt.hash(datosUsuario.password, 10);
+        // Cifra la contraseña antes de almacenarla.
+        const passwordHash = await bcrypt.hash(
+            datosUsuario.password,
+            10
+        );
 
         // Prepara los datos que se guardarán en la base de datos.
-        const nuevosDatosUsuario = {
+        const datosNuevoUsuario = {
             nombre: datosUsuario.nombre,
             apellido: datosUsuario.apellido,
             correo: datosUsuario.correo,
-
-            // Al repositorio se envía el hash, nunca la contraseña original.
             password: passwordHash
         };
 
-        // Solicita al repositorio que cree el usuario en MySQL.
+        // Guarda el nuevo usuario mediante el repositorio.
         const usuarioCreado = await usuarioRepository.crearUsuario(
-            nuevosDatosUsuario
+            datosNuevoUsuario
         );
 
-        // Devuelve únicamente los datos públicos del usuario registrado.
-        // La contraseña y su hash no deben incluirse en la respuesta.
+        // Devuelve únicamente los datos públicos del usuario.
         return {
             id: usuarioCreado.id,
             nombre: usuarioCreado.nombre,
             apellido: usuarioCreado.apellido,
-            correo: usuarioCreado.correo,
-            fechaCreacion: usuarioCreado.fechaCreacion
+            correo: usuarioCreado.correo
         };
     },
 
-    // Inicia sesión verificando las credenciales del usuario.
+    // Comprueba las credenciales e inicia una sesión.
     async iniciarSesion(datosUsuario) {
 
-        // Busca en la base de datos la cuenta asociada al correo recibido.
+        // Busca al usuario utilizando su correo electrónico.
         const usuario = await usuarioRepository.buscarPorCorreo(
             datosUsuario.correo
         );
 
-        // Si el usuario no existe, rechaza las credenciales.
+        // Rechaza el inicio de sesión si el usuario no existe.
         if (!usuario) {
-            const error = new Error("Correo electrónico o contraseña incorrectos.");
 
-            // Asigna un código para que el controlador responda con HTTP 401.
+            // Crea un error con un código identificable.
+            const error = new Error(
+                "Correo electrónico o contraseña incorrectos."
+            );
+
+            // Utiliza el mismo código para ambos casos de credenciales inválidas.
             error.code = "CREDENCIALES_INVALIDAS";
 
-            // Detiene el proceso de inicio de sesión.
+            // Propaga el error al controlador.
             throw error;
         }
 
-        // Compara la contraseña recibida con el hash guardado en MySQL.
-        const passwordCorrecta = await bcrypt.compare(
+        // Compara la contraseña recibida con el hash almacenado.
+        const contrasenaValida = await bcrypt.compare(
             datosUsuario.password,
             usuario.password
         );
 
-        // Si la contraseña no coincide, rechaza las credenciales.
-        if (!passwordCorrecta) {
-            const error = new Error("Correo electrónico o contraseña incorrectos.");
+        // Rechaza el inicio de sesión si la contraseña es incorrecta.
+        if (!contrasenaValida) {
 
-            // Utiliza el mismo código tanto si el correo existe como si no.
+            // Crea un error para identificar las credenciales incorrectas.
+            const error = new Error(
+                "Correo electrónico o contraseña incorrectos."
+            );
+
+            // Mantiene un mensaje genérico para proteger al usuario.
             error.code = "CREDENCIALES_INVALIDAS";
 
-            // Detiene el proceso de inicio de sesión.
+            // Propaga el error al controlador.
             throw error;
         }
 
-        // Comprueba que la clave secreta JWT esté configurada.
-        if (!process.env.JWT_SECRET) {
-            const error = new Error("La clave secreta de JWT no está configurada.");
+        // Obtiene la clave secreta utilizada para firmar los tokens JWT.
+        const jwtSecret = process.env.JWT_SECRET;
 
-            // Identifica un problema de configuración del servidor.
+        // Comprueba que la clave secreta esté configurada.
+        if (
+            typeof jwtSecret !== "string" ||
+            jwtSecret.trim().length === 0
+        ) {
+
+            // Crea un error que identifica un problema de configuración.
+            const error = new Error(
+                "La variable JWT_SECRET no está configurada correctamente."
+            );
+
+            // Asigna un código que reconoce el controlador.
             error.code = "JWT_SECRET_NO_CONFIGURADA";
 
-            // Evita generar un token sin la clave secreta.
+            // Propaga el error para que lo gestione el controlador.
             throw error;
         }
 
-        // Genera un token firmado que identifica al usuario autenticado.
+        // Genera un token JWT asociado al identificador del usuario.
         const token = jwt.sign(
             {
                 sub: String(usuario.id)
             },
-            process.env.JWT_SECRET,
+            jwtSecret,
             {
                 algorithm: "HS256",
                 expiresIn: "1h"
             }
         );
 
-        // Devuelve el token y los datos públicos de la cuenta.
-        // Nunca devuelve la contraseña ni el hash almacenado.
+        // Devuelve el token y los datos públicos del usuario autenticado.
         return {
             token: token,
             tipoToken: "Bearer",
@@ -128,13 +147,11 @@ const authService = {
                 id: usuario.id,
                 nombre: usuario.nombre,
                 apellido: usuario.apellido,
-                correo: usuario.correo,
-                fechaCreacion: usuario.fechaCreacion
+                correo: usuario.correo
             }
         };
     }
 };
 
-// Exporta el servicio para que pueda utilizarse desde el controlador.
+// Exporta los servicios para utilizarlos desde los controladores.
 module.exports = authService;
-
