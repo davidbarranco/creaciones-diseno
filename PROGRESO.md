@@ -65,7 +65,7 @@ La base de datos del proyecto se denomina `creaciones_diseno`.
 El modelo `Usuario` contiene los siguientes campos:
 
 | Campo         | Función                          |
-| ------------- | -------------------------------- |
+|---------------|----------------------------------|
 | id            | Identificador único del usuario. |
 | nombre        | Nombre del usuario.              |
 | apellido      | Apellido del usuario.            |
@@ -269,60 +269,55 @@ Cuando la solicitud no cumple las condiciones de autenticación, el middleware r
 
 ---
 
-## 10. Pruebas de seguridad realizadas
+## 10. Pruebas de autenticación y seguridad realizadas
 
-Las pruebas se realizaron utilizando Postman.
+Se realizaron 10 pruebas en Postman para verificar el registro de usuarios, el inicio de sesión y la protección de rutas mediante JSON Web Tokens (JWT).
 
-### Prueba 1. Solicitud sin token
+### 10.1. Pruebas de registro de usuarios
 
-Se envió una solicitud al endpoint protegido sin proporcionar un token.
+| N.º | Prueba                               | Resultado esperado | Resultado obtenido | Estado   |
+|-----|--------------------------------------|--------------------|--------------------|----------|
+| 1   | Registro con datos válidos           | `201 Created`      | `201 Created`      | Aprobada |
+| 2   | Registro con un correo ya registrado | `409 Conflict`     | `409 Conflict`     | Aprobada |
+| 3   | Registro con datos incompletos       | `400 Bad Request`  | `400 Bad Request`  | Aprobada |
 
-**Resultado:** `401 Unauthorized`.
+**Resultado:** el sistema permite registrar usuarios con datos válidos, rechaza correos duplicados y valida la información obligatoria.
 
-La API rechazó la solicitud.
+### 10.2. Pruebas de inicio de sesión
 
-**Estado:** APROBADA.
+| N.º | Prueba                                      | Resultado esperado | Resultado obtenido | Estado   |
+|-----|---------------------------------------------|--------------------|--------------------|----------|
+| 4   | Inicio de sesión con credenciales correctas | `200 OK`           | `200 OK`           | Aprobada |
+| 5   | Inicio de sesión con contraseña incorrecta  | `401 Unauthorized` | `401 Unauthorized` | Aprobada |
+| 6   | Inicio de sesión con un usuario inexistente | `401 Unauthorized` | `401 Unauthorized` | Aprobada |
 
-### Prueba 2. Token alterado
+**Resultado:** el sistema permite iniciar sesión con credenciales válidas y rechaza las credenciales incorrectas o pertenecientes a usuarios inexistentes.
 
-Se modificó un carácter del token para comprobar que la API rechazara un token cuya firma no superara la verificación.
+### 10.3. Pruebas de seguridad JWT
 
-**Resultado:** `401 Unauthorized`.
+| N.º | Prueba                                          | Resultado esperado | Resultado obtenido | Estado   |
+|-----|-------------------------------------------------|--------------------|--------------------|----------|
+| 7   | Acceso a una ruta protegida sin enviar un token | `401 Unauthorized` | `401 Unauthorized` | Aprobada |
+| 8   | Acceso con un token alterado                    | `401 Unauthorized` | `401 Unauthorized` | Aprobada |
+| 9   | Acceso con un token expirado                    | `401 Unauthorized` | `401 Unauthorized` | Aprobada |
+| 10  | Acceso con un token válido                      | `200 OK`           | `200 OK`           | Aprobada |
 
-**Estado:** APROBADA.
+**Resultado:** el middleware de autenticación rechaza las solicitudes sin token, con tokens alterados o expirados, y permite el acceso cuando el token es válido.
 
-### Prueba 3. Token expirado
+### 10.4. Resumen de resultados
 
-Se generó un token de prueba con una duración de un segundo. Después de esperar su expiración, se utilizó en Postman.
+* **Total de pruebas ejecutadas:** 10.
+* **Pruebas aprobadas:** 10.
+* **Pruebas fallidas:** 0.
+* **Herramienta utilizada:** Postman.
+* **Mecanismo de autenticación:** JSON Web Token (JWT).
 
-**Resultado:** `401 Unauthorized`.
+### 10.5. Conclusión
 
-**Estado:** APROBADA.
+Las 10 pruebas realizadas obtuvieron los resultados esperados. Se verificó el funcionamiento del registro de usuarios, el inicio de sesión, la validación de datos, el rechazo de correos duplicados y el control de acceso a rutas protegidas mediante JWT.
 
-### Prueba 4. Token válido
+Los resultados respaldan el funcionamiento de los casos evaluados, pero no sustituyen una auditoría completa de seguridad ni garantizan que la aplicación esté libre de vulnerabilidades.
 
-Se inició sesión, se obtuvo un token JWT y se utilizó como Bearer Token para consultar el endpoint protegido.
-
-**Resultado:** `200 OK`.
-
-La API permitió el acceso y devolvió el identificador del usuario autenticado.
-
-**Estado:** APROBADA.
-
-### Resumen
-
-| Prueba              | Resultado        | Estado   |
-| ------------------- | ---------------- | -------- |
-| Solicitud sin token | 401 Unauthorized | Aprobada |
-| Token alterado      | 401 Unauthorized | Aprobada |
-| Token expirado      | 401 Unauthorized | Aprobada |
-| Token válido        | 200 OK           | Aprobada |
-
-**Total de pruebas ejecutadas:** 4.
-
-**Pruebas aprobadas:** 4.
-
-Estas pruebas verifican los comportamientos evaluados, pero no equivalen a una auditoría completa de seguridad.
 
 ---
 
