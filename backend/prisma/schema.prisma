@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,12 +8,51 @@ datasource db {
 }
 
 model Usuario {
-  id              Int      @id @default(autoincrement())
-  nombre          String   @db.VarChar(100)
-  apellido        String   @db.VarChar(100)
-  correo          String   @unique @db.VarChar(150)
-  password        String   @db.VarChar(255)
-  fechaCreacion   DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  nombre        String   @db.VarChar(100)
+  apellido      String   @db.VarChar(100)
+  correo        String   @unique @db.VarChar(150)
+  password      String   @db.VarChar(255)
+  fechaCreacion DateTime @default(now())
+
+  pedidos Pedido[]
 
   @@map("usuarios")
+}
+
+model Pedido {
+  id        Int @id @default(autoincrement())
+  usuarioId Int
+
+  nombre       String  @db.VarChar(100)
+  apellido     String  @db.VarChar(100)
+  correo       String  @db.VarChar(150)
+  telefono     String  @db.VarChar(30)
+  direccion    String  @db.VarChar(255)
+  ciudad       String  @db.VarChar(100)
+  departamento String  @db.VarChar(100)
+  indicaciones String? @db.Text
+
+  total         Decimal  @db.Decimal(10, 2)
+  estado        String   @default("PENDIENTE") @db.VarChar(30)
+  fechaCreacion DateTime @default(now())
+
+  usuario  Usuario         @relation(fields: [usuarioId], references: [id])
+  detalles DetallePedido[]
+
+  @@map("pedidos")
+}
+
+model DetallePedido {
+  id             Int     @id @default(autoincrement())
+  pedidoId       Int
+  productoId     Int
+  nombreProducto String  @db.VarChar(150)
+  precio         Decimal @db.Decimal(10, 2)
+  cantidad       Int
+  subtotal       Decimal @db.Decimal(10, 2)
+
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+
+  @@map("detalles_pedido")
 }

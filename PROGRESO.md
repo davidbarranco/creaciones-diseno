@@ -442,3 +442,235 @@ Para continuar el desarrollo:
 8. No publicar contraseñas, tokens ni claves secretas.
 9. Evitar repetir revisiones que ya se completaron.
 10. Actualizar este archivo cuando se termine una fase importante.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# PROGRESO DEL FRONTEND – CREACIONES & DISEÑO
+
+## 1. Tecnologías utilizadas
+
+* React 19.
+* Vite 8.
+* JavaScript.
+* HTML5.
+* CSS3.
+* React Router DOM.
+* API REST desarrollada con Node.js y Express.
+* JWT para autenticación.
+* MySQL para almacenamiento de información.
+
+## 2. Estructura del proyecto
+
+Se organizó el frontend con una estructura modular para separar responsabilidades:
+
+```text
+frontend/
+└── src/
+    ├── assets/
+    ├── components/
+    ├── pages/
+    ├── layouts/
+    ├── services/
+    ├── context/
+    ├── routes/
+    ├── hooks/
+    ├── utils/
+    ├── App.jsx
+    ├── App.css
+    ├── index.css
+    └── main.jsx
+```
+
+## 3. Funcionalidades desarrolladas
+
+### 3.1. Configuración y conexión con el backend
+
+* Configuración de la URL de la API mediante variables de entorno en `.env`.
+* Conexión del frontend con el backend utilizando `fetch`.
+* Comunicación con los endpoints de autenticación y pedidos.
+
+### 3.2. Autenticación de usuarios
+
+Se implementaron las siguientes funcionalidades:
+
+* Registro de usuarios.
+* Inicio de sesión.
+* Almacenamiento del token JWT en `localStorage`.
+* Almacenamiento de información del usuario.
+* Cierre de sesión.
+* Manejo del estado de autenticación mediante `AuthContext`.
+* Protección de rutas mediante `ProtectedRoute`.
+* Visualización dinámica de opciones en el encabezado según el estado de autenticación.
+
+Archivos principales:
+
+* `services/auth.service.js`
+* `context/AuthContext.jsx`
+* `pages/Registro.jsx`
+* `pages/Login.jsx`
+* `pages/MiCuenta.jsx`
+* `routes/ProtectedRoute.jsx`
+
+### 3.3. Catálogo de productos
+
+Se implementó un catálogo inicial con productos de ejemplo:
+
+* Camiseta personalizada.
+* Mug personalizado.
+* Camiseta básica.
+* Productos decorativos.
+
+Cada producto contiene:
+
+* Identificador.
+* Nombre.
+* Categoría.
+* Precio.
+* Imagen.
+
+Por ahora, los productos se encuentran definidos estáticamente en el frontend.
+
+### 3.4. Carrito de compras
+
+Se desarrolló un carrito utilizando `CarritoContext.jsx`.
+
+Funcionalidades implementadas:
+
+* Agregar productos.
+* Aumentar cantidades.
+* Disminuir cantidades.
+* Eliminar productos.
+* Vaciar el carrito.
+* Calcular el total de productos.
+* Calcular el valor total de la compra.
+* Persistencia del carrito mediante `localStorage`.
+
+Archivo principal:
+
+* `context/CarritoContext.jsx`
+* `pages/Carrito.jsx`
+
+### 3.5. Finalización de compra
+
+Se desarrolló la página `FinalizarCompra.jsx`.
+
+Incluye un formulario con los siguientes datos:
+
+* Nombre.
+* Apellido.
+* Correo electrónico.
+* Teléfono.
+* Dirección.
+* Ciudad.
+* Departamento.
+* Indicaciones adicionales.
+
+También incluye:
+
+* Carga automática de los datos del usuario autenticado.
+* Validación de campos obligatorios.
+* Resumen de los productos del carrito.
+* Cálculo del total de la compra.
+* Envío de la información al backend.
+* Envío del token JWT mediante el encabezado `Authorization`.
+* Visualización de errores durante el proceso.
+* Limpieza del carrito después de registrar correctamente el pedido.
+* Redirección a la página principal después de finalizar la compra.
+
+## 4. Integración con el backend
+
+Se conectó el formulario de finalización de compra con el endpoint:
+
+```http
+POST /api/v1/pedidos
+```
+
+El frontend envía:
+
+* Datos de entrega del cliente.
+* Identificadores de los productos.
+* Cantidades seleccionadas.
+* Token JWT del usuario autenticado.
+
+El backend se encarga de validar los productos, consultar sus precios oficiales, calcular los subtotales y el total, y guardar la información en MySQL mediante Prisma.
+
+## 5. Pruebas realizadas
+
+Se realizaron pruebas desde la aplicación web:
+
+* Registro de usuarios.
+* Inicio de sesión.
+* Persistencia de la sesión.
+* Agregar productos al carrito.
+* Modificar cantidades.
+* Eliminar productos.
+* Calcular el total de la compra.
+* Completar el formulario de entrega.
+* Enviar el pedido al backend.
+* Registrar correctamente el pedido en MySQL.
+* Verificar los registros mediante Prisma Studio.
+
+Se confirmó que los pedidos se almacenan correctamente en las tablas:
+
+* `Pedido`
+* `DetallePedido`
+
+## 6. Estado actual del frontend
+
+| Funcionalidad                 | Estado               |
+|-------------------------------|----------------------|
+| Configuración de React y Vite | Completado           |
+| Estructura modular            | Completado           |
+| Conexión con el backend       | Completado           |
+| Registro de usuarios          | Completado           |
+| Inicio de sesión              | Completado           |
+| Autenticación JWT             | Completado           |
+| Protección de rutas           | Completado           |
+| Catálogo inicial              | Completado           |
+| Carrito de compras            | Completado           |
+| Finalización de compra        | Completado           |
+| Registro de pedidos en MySQL  | Completado y probado |
+
+## 7. Próximas tareas pendientes
+
+Continuar el desarrollo con las siguientes funcionalidades:
+
+1. Desarrollar el historial de pedidos en la sección «Mi cuenta».
+2. Crear la consulta de pedidos del usuario autenticado.
+3. Mostrar el detalle de cada pedido.
+4. Mostrar el estado de cada pedido.
+5. Conectar el catálogo del frontend con una API de productos.
+6. Desarrollar la administración de productos.
+7. Mejorar y completar el diseño visual de la tienda.
+8. Implementar las funcionalidades restantes del ecommerce.
+
+## 8. Punto exacto donde quedó el desarrollo
+
+El frontend ya permite que un usuario se registre, inicie sesión, agregue productos al carrito, complete sus datos de entrega y realice una compra.
+
+El pedido se envía correctamente al backend, se procesa mediante la arquitectura por capas y se almacena en MySQL.
+
+La información fue verificada mediante Prisma Studio.
+
+**Próximo paso al retomar:** desarrollar el historial de pedidos dentro de «Mi cuenta», permitiendo que cada usuario consulte únicamente sus propias compras.
+

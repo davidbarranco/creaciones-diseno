@@ -17,6 +17,8 @@ const app = express();
 // Configura el origen autorizado para realizar solicitudes desde el frontend.
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
+const pedidoRoutes = require("./routes/pedido.routes");
+
 // Configura CORS para permitir solicitudes desde el frontend autorizado.
 app.use(cors({
     origin: frontendUrl,
@@ -39,6 +41,8 @@ app.use("/api/v1/auth", authRoutes);
 
 // Registra las rutas para comprobar la autenticación JWT.
 app.use("/api/v1/prueba", pruebaRoutes);
+
+app.use("/api/v1/pedidos", pedidoRoutes);
 
 // Gestiona las solicitudes dirigidas a rutas inexistentes.
 app.use(function (req, res) {
