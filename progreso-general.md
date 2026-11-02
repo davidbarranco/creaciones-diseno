@@ -145,7 +145,6 @@ creacionesydiseno/
 
 Se implementó una arquitectura por capas para separar las responsabilidades del sistema.
 
-```text
 backend/
 │
 ├── prisma/
@@ -347,9 +346,9 @@ Este catálogo deberá reemplazarse posteriormente por una gestión de productos
 
 Dirección base:
 
-```text
+
 http://localhost:3000/api/v1
-```
+
 
 | Método | Endpoint            | Función                            |
 |--------|---------------------|------------------------------------|
@@ -363,15 +362,15 @@ http://localhost:3000/api/v1
 
 Las rutas protegidas reciben el token mediante:
 
-```http
+
 Authorization: Bearer TOKEN_JWT
-```
+
 
 ### Endpoint de pedidos
 
-```http
+
 POST /api/v1/pedidos
-```
+
 
 Recibe:
 
@@ -507,9 +506,9 @@ Se realizaron pruebas mediante Postman y Jest/Supertest.
 
 Archivo:
 
-```text
+
 backend/tests/app.test.js
-```
+
 
 Estado conocido:
 
@@ -576,13 +575,13 @@ Importante: cuando se modifica este archivo se debe reiniciar el servidor de Vit
 
 Archivos principales:
 
-```text
+
 src/services/auth.service.js
 src/context/AuthContext.jsx
 src/pages/Registro.jsx
 src/pages/Login.jsx
 src/pages/MiCuenta.jsx
-```
+
 
 Funcionalidades:
 
@@ -606,9 +605,9 @@ Se implementó protección de rutas para restringir el acceso a páginas que req
 
 La navegación se organiza mediante:
 
-```text
+
 src/routes/AppRouter.jsx
-```
+
 
 ## 8.5. Catálogo de productos
 
@@ -658,17 +657,16 @@ Funcionalidades:
 
 El contexto global se conecta desde:
 
-```text
 src/main.jsx
-```
+
 
 ## 8.7. Finalización de compra
 
 Archivo:
 
-```text
+
 src/pages/FinalizarCompra.jsx
-```
+
 
 Formulario implementado:
 
@@ -1064,18 +1062,73 @@ La creación de pedidos fue probada desde la aplicación web y verificada median
 
 **NO ES NECESARIO VOLVER A DESARROLLAR ESTAS FUNCIONALIDADES.**
 
-### PRÓXIMO PASO EXACTO
 
-Continuar con el desarrollo del historial de pedidos.
+# ETAPA ACTUAL: ADMINISTRACIÓN DE PEDIDOS
 
-Primero trabajar en el backend:
+## Estado actual
 
-1. Revisar el repositorio de pedidos existente.
-2. Implementar la consulta de pedidos por usuario autenticado.
-3. Crear el endpoint correspondiente.
-4. Probarlo con Postman.
-5. Después conectar el endpoint con la página «Mi cuenta» del frontend.
+Se completó la implementación del historial de pedidos en el frontend y backend.
 
-Mantener la arquitectura y las convenciones que ya están implementadas.
+Actualmente, el usuario autenticado puede:
 
-**Objetivo:** continuar el proyecto desde el estado real en que quedó, sin repetir funcionalidades terminadas.
+* Consultar su historial de compras.
+* Visualizar los productos de cada pedido.
+* Consultar cantidades, precios y subtotales.
+* Ver el total y el estado del pedido.
+* Consultar los datos de entrega: destinatario, teléfono, dirección, ciudad, departamento y correo electrónico.
+* Visualizar indicaciones adicionales cuando existen.
+
+Se comprobó el funcionamiento desde la aplicación web y la información se recupera correctamente desde MySQL.
+
+## Funcionalidad en desarrollo: Administración de pedidos
+
+El siguiente objetivo es desarrollar un módulo administrativo que permita gestionar los pedidos recibidos en la tienda.
+
+### Estado del avance
+
+Se definió comenzar por el backend y se preparó el código para crear el archivo:
+
+`backend/src/repositories/admin.repository.js`
+
+Este repositorio tendrá tres funciones:
+
+* Consultar todos los pedidos.
+* Buscar un pedido por su identificador.
+* Actualizar el estado de un pedido.
+
+**Pendiente:** confirmar la creación y guardado de este archivo. Todavía no se han implementado las demás capas administrativas.
+
+## Próximos pasos
+
+1. Confirmar y revisar `admin.repository.js`.
+2. Crear `admin.service.js`.
+3. Crear `admin.controller.js`.
+4. Crear `admin.routes.js`.
+5. Implementar autorización por roles para restringir el acceso a administradores.
+6. Crear endpoints para consultar y actualizar pedidos.
+7. Probar los endpoints con Postman.
+8. Desarrollar la interfaz administrativa en React.
+9. Conectar el frontend con los endpoints administrativos.
+
+### Estados previstos para los pedidos
+
+* Pendiente.
+* En preparación.
+* Enviado.
+* Entregado.
+* Cancelado.
+
+## Etapas posteriores
+
+Una vez terminada la administración de pedidos, continuar con:
+
+1. **API de productos:** crear el modelo Producto en Prisma y conectar el catálogo con MySQL.
+2. **Administración de productos:** crear, editar, desactivar y consultar productos.
+3. **Administración de usuarios:** gestionar usuarios y permisos.
+4. **Mejoras del ecommerce:** búsqueda, filtros, imágenes y pasarela de pagos.
+
+## Instrucción para retomar el desarrollo
+
+Continuar desde la administración de pedidos, comenzando por revisar o crear `backend/src/repositories/admin.repository.js`.
+
+Mantener la arquitectura por capas, trabajar una funcionalidad a la vez y probar cada implementación antes de continuar.

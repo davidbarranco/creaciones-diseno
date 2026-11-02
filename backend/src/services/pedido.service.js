@@ -1,5 +1,6 @@
 
 const pedidoRepository = require("../repositories/pedido.repository");
+
 const { buscarProductoPorId } = require("../catalog/productos");
 
 // Valida los productos y calcula los valores oficiales del pedido.
@@ -66,7 +67,15 @@ async function crearPedido(datosEntrega, usuarioId, productosCarrito) {
     return await pedidoRepository.crearPedido(nuevoPedido);
 }
 
+// Consulta el historial de pedidos de un usuario.
+async function obtenerPedidosPorUsuario(usuarioId) {
+
+    return await pedidoRepository.buscarPedidosPorUsuario(usuarioId);
+
+}
+
 module.exports = {
-    crearPedido
+    crearPedido,
+    obtenerPedidosPorUsuario
 };
 
