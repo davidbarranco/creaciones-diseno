@@ -1,3 +1,4 @@
+
 // Importa bcrypt para cifrar contraseñas y verificar credenciales.
 const bcrypt = require("bcrypt");
 
@@ -20,16 +21,11 @@ const authService = {
 
         // Evita registrar dos usuarios con el mismo correo electrónico.
         if (usuarioExistente) {
-
-            // Crea un error que el controlador puede identificar.
             const error = new Error(
                 "El correo electrónico ya está registrado."
             );
 
-            // Asigna un código para identificar el conflicto.
             error.code = "CORREO_DUPLICADO";
-
-            // Propaga el error para que lo gestione el controlador.
             throw error;
         }
 
@@ -57,7 +53,8 @@ const authService = {
             id: usuarioCreado.id,
             nombre: usuarioCreado.nombre,
             apellido: usuarioCreado.apellido,
-            correo: usuarioCreado.correo
+            correo: usuarioCreado.correo,
+            rol: usuarioCreado.rol
         };
     },
 
@@ -71,16 +68,11 @@ const authService = {
 
         // Rechaza el inicio de sesión si el usuario no existe.
         if (!usuario) {
-
-            // Crea un error con un código identificable.
             const error = new Error(
                 "Correo electrónico o contraseña incorrectos."
             );
 
-            // Utiliza el mismo código para ambos casos de credenciales inválidas.
             error.code = "CREDENCIALES_INVALIDAS";
-
-            // Propaga el error al controlador.
             throw error;
         }
 
@@ -92,16 +84,11 @@ const authService = {
 
         // Rechaza el inicio de sesión si la contraseña es incorrecta.
         if (!contrasenaValida) {
-
-            // Crea un error para identificar las credenciales incorrectas.
             const error = new Error(
                 "Correo electrónico o contraseña incorrectos."
             );
 
-            // Mantiene un mensaje genérico para proteger al usuario.
             error.code = "CREDENCIALES_INVALIDAS";
-
-            // Propaga el error al controlador.
             throw error;
         }
 
@@ -113,16 +100,11 @@ const authService = {
             typeof jwtSecret !== "string" ||
             jwtSecret.trim().length === 0
         ) {
-
-            // Crea un error que identifica un problema de configuración.
             const error = new Error(
                 "La variable JWT_SECRET no está configurada correctamente."
             );
 
-            // Asigna un código que reconoce el controlador.
             error.code = "JWT_SECRET_NO_CONFIGURADA";
-
-            // Propaga el error para que lo gestione el controlador.
             throw error;
         }
 
@@ -147,7 +129,8 @@ const authService = {
                 id: usuario.id,
                 nombre: usuario.nombre,
                 apellido: usuario.apellido,
-                correo: usuario.correo
+                correo: usuario.correo,
+                rol: usuario.rol
             }
         };
     }
@@ -155,3 +138,4 @@ const authService = {
 
 // Exporta los servicios para utilizarlos desde los controladores.
 module.exports = authService;
+

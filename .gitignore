@@ -18,3 +18,12 @@ npm-debug.log*
 # Archivos del sistema
 .DS_Store
 Thumbs.db
+
+
+# Imágenes cargadas por los usuarios
+backend/uploads/
+
+# Archivos temporales
+*.tmp
+*.temp
+

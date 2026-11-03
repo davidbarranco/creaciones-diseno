@@ -13,6 +13,7 @@ model Usuario {
   apellido      String   @db.VarChar(100)
   correo        String   @unique @db.VarChar(150)
   password      String   @db.VarChar(255)
+  rol           String   @default("CLIENTE") @db.VarChar(20)
   fechaCreacion DateTime @default(now())
 
   pedidos Pedido[]
@@ -50,9 +51,42 @@ model DetallePedido {
   nombreProducto String  @db.VarChar(150)
   precio         Decimal @db.Decimal(10, 2)
   cantidad       Int
+  talla String? @db.VarChar(10)
   subtotal       Decimal @db.Decimal(10, 2)
 
   pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
 
   @@map("detalles_pedido")
+}
+
+model Producto {
+id Int @id @default(autoincrement())
+nombre String @db.VarChar(150)
+descripcion String? @db.Text
+precio Decimal @db.Decimal(10, 2)
+categoria String @db.VarChar(100)
+imagen String? @db.VarChar(500)
+stock Int @default(0)
+disponible Boolean @default(true)
+requiereTalla Boolean @default(false)
+fechaCreacion DateTime @default(now())
+fechaActualizacion DateTime @updatedAt
+
+variantes VarianteProducto[]
+
+@@index([categoria])
+@@index([disponible])
+@@map("productos")
+}
+
+model VarianteProducto {
+id Int @id @default(autoincrement())
+productoId Int
+talla String @db.VarChar(10)
+stock Int @default(0)
+
+producto Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+
+@@unique([productoId, talla])
+@@map("variantes_productos")
 }

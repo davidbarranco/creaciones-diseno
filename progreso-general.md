@@ -1132,3 +1132,325 @@ Una vez terminada la administración de pedidos, continuar con:
 Continuar desde la administración de pedidos, comenzando por revisar o crear `backend/src/repositories/admin.repository.js`.
 
 Mantener la arquitectura por capas, trabajar una funcionalidad a la vez y probar cada implementación antes de continuar.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# PROGRESO DEL PROYECTO – CREACIONES & DISEÑO
+
+## 1. Estado general del proyecto
+
+Se continúa con el desarrollo de la aplicación web Creaciones & Diseño, un sistema de comercio electrónico para la venta de productos personalizados.
+
+### Tecnologías utilizadas
+
+**Frontend**
+
+* React 19.
+* Vite.
+* JavaScript.
+* HTML5.
+* CSS3.
+
+**Backend**
+
+* Node.js.
+* Express.
+* API REST.
+* JWT para autenticación.
+* Bcrypt para cifrado de contraseñas.
+* Zod para validación de datos.
+* Multer para gestionar la carga de imágenes.
+
+**Base de datos**
+
+* MySQL.
+* Prisma ORM.
+
+---
+
+## 2. Funcionalidades desarrolladas
+
+### Autenticación y seguridad
+
+* Registro de usuarios.
+* Inicio de sesión.
+* Cifrado de contraseñas mediante Bcrypt.
+* Generación de tokens JWT.
+* Verificación de tokens.
+* Control de acceso mediante roles.
+* Diferenciación entre usuarios ADMIN y CLIENTE.
+* Protección de rutas administrativas.
+
+### Gestión administrativa de productos
+
+Se desarrolló la funcionalidad para administrar los productos desde el frontend.
+
+Operaciones implementadas:
+
+* Consultar todos los productos.
+* Registrar productos nuevos.
+* Editar productos existentes.
+* Desactivar productos.
+* Registrar nombre, descripción, precio, categoría y stock.
+* Configurar disponibilidad.
+* Definir si un producto requiere tallas.
+* Gestionar inventario por variantes y tallas.
+
+### Carga de imágenes
+
+Se implementó la carga de imágenes mediante Multer.
+
+Características:
+
+* Almacenamiento de imágenes en `backend/uploads`.
+* Generación de nombres únicos para los archivos.
+* Validación de formatos JPG, JPEG, PNG y WEBP.
+* Límite de tamaño de 5 MB.
+* Publicación de imágenes mediante Express.
+
+### Base de datos
+
+Se cuenta con las tablas necesarias para gestionar:
+
+* Usuarios.
+* Productos.
+* Variantes de productos.
+* Pedidos.
+* Detalles de pedidos.
+
+---
+
+## 3. Correcciones realizadas
+
+### 3.1. Error de autenticación JWT
+
+Se presentó el error:
+
+`401 Unauthorized`
+
+Causa identificada:
+El token JWT utilizado había expirado.
+
+Solución:
+
+* Se cerró la sesión.
+* Se inició sesión nuevamente.
+* Se generó un nuevo token.
+* Se comprobó nuevamente el acceso administrativo.
+
+Resultado: CORREGIDO.
+
+### 3.2. Error al consultar productos administrativos
+
+Se presentó el mensaje:
+
+`No fue posible consultar los productos.`
+
+La solicitud GET `/api/v1/admin/productos` devolvía un error 401.
+
+Después de renovar el token, la consulta volvió a funcionar correctamente.
+
+Resultado: CORREGIDO.
+
+### 3.3. Error en las rutas de las imágenes
+
+Se identificó un error en `backend/src/controllers/producto.controller.js`.
+
+La ruta se estaba construyendo incorrectamente:
+
+`/ uploads / producto-archivo.jpg `
+
+Se corrigió la asignación:
+
+```javascript
+datos.imagen = `/uploads/${archivo.filename}`;
+```
+
+Ahora las nuevas imágenes utilizan una ruta sin espacios innecesarios.
+
+Resultado: CORREGIDO PARA NUEVOS REGISTROS.
+
+### 3.4. Almacenamiento de imágenes
+
+Se comprobó que las imágenes se guardan correctamente dentro de:
+
+`backend/uploads`
+
+También se verificó que los archivos existen y pueden abrirse directamente desde el explorador de archivos.
+
+Resultado: ALMACENAMIENTO FUNCIONAL.
+
+---
+
+## 4. Estado actual
+
+| Funcionalidad                         | Estado                |
+|---------------------------------------|-----------------------|
+| Registro de usuarios                  | Funcionando           |
+| Inicio de sesión                      | Funcionando           |
+| Autenticación JWT                     | Funcionando           |
+| Control de roles                      | Funcionando           |
+| Acceso administrativo                 | Funcionando           |
+| Consulta de productos                 | Funcionando           |
+| Registro de productos                 | Implementado          |
+| Edición de productos                  | Implementada          |
+| Desactivación de productos            | Implementada          |
+| Carga de imágenes                     | Implementada          |
+| Almacenamiento de imágenes            | Funcionando           |
+| Visualización de imágenes en frontend | Pendiente de corregir |
+| Corrección de rutas antiguas en MySQL | Pendiente             |
+
+---
+
+## 5. Archivos trabajados
+
+### Backend
+
+`backend/src/controllers/producto.controller.js`
+
+Se corrigió la función `prepararDatosProducto` para construir correctamente las rutas de las imágenes.
+
+`backend/src/services/auth.service.js`
+
+Se revisó la generación de tokens JWT y su duración de una hora.
+
+`backend/src/middlewares/auth.middleware.js`
+
+Se revisó la validación del token y la consulta del rol del usuario desde MySQL.
+
+`backend/src/middlewares/subirImagen.middleware.js`
+
+Se revisó la configuración de Multer para almacenar y validar imágenes.
+
+`backend/src/routes/admin.routes.js`
+
+Se revisaron las rutas administrativas para la gestión de productos y la carga de imágenes.
+
+`backend/src/app.js`
+
+Se verificó la publicación de la carpeta `uploads` mediante Express.
+
+### Frontend
+
+`frontend/src/pages/admin/AdminProductos.jsx`
+
+Se trabajó en el formulario administrativo, la selección de imágenes, la vista previa y las operaciones de gestión de productos.
+
+`frontend/src/services/admin.service.js`
+
+Se trabajó en las solicitudes HTTP para consultar, registrar, actualizar y desactivar productos.
+
+---
+
+## 6. Actividades pendientes
+
+### Prioridad 1. Visualización de imágenes
+
+Investigar por qué las imágenes almacenadas correctamente en el backend no aparecen en el frontend.
+
+Revisar:
+
+* Función `obtenerUrlImagen()` en `AdminProductos.jsx`.
+* Construcción de las URL de las imágenes.
+* Respuesta del servidor al solicitar los archivos.
+* Configuración de la ruta pública `/uploads`.
+
+### Prioridad 2. Corregir imágenes existentes
+
+Los productos registrados anteriormente conservan rutas incorrectas en MySQL.
+
+Se deben corregir los registros afectados para eliminar los espacios de las rutas.
+
+### Prioridad 3. Pruebas de administración
+
+Realizar pruebas completas de:
+
+* Registro de productos.
+* Edición de productos.
+* Carga y visualización de imágenes.
+* Gestión de tallas.
+* Actualización de inventario.
+* Desactivación de productos.
+
+---
+
+## 7. Próximo paso del desarrollo
+
+Continuar con la corrección de la visualización de imágenes en el frontend.
+
+Una vez solucionado este inconveniente, realizar pruebas completas del módulo administrativo de productos y continuar con el desarrollo del comercio electrónico.
+
+**Estado general:** proyecto en desarrollo. Módulo de autenticación y gestión administrativa de productos implementado, con ajustes pendientes en la visualización de imágenes.

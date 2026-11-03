@@ -102,6 +102,16 @@ function MiCuenta() {
                         </div>
                     </div>
 
+                    {/* Acceso exclusivo para administradores */}
+                    {usuario.rol === "ADMIN" && (
+                        <button
+                            className="boton-administracion"
+                            onClick={() => navigate("/admin/pedidos")}
+                        >
+                            Administración de pedidos
+                        </button>
+                    )}
+
                     <button
                         className="boton-cerrar-sesion"
                         onClick={cerrarSesion}

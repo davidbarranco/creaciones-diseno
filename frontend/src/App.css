@@ -521,12 +521,6 @@
   }
 }
 
-/* Accesos de usuario y carrito */
-.acciones-usuario {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
 
 .boton-cuenta,
 .boton-carrito {
@@ -1123,16 +1117,7 @@ MI CUENTA E HISTORIAL DE PEDIDOS
   grid-column: 1 / -1;
 }
 
-.boton-cerrar-sesion {
-  margin-top: 25px;
-  padding: 12px 22px;
-  color: white;
-  background: var(--color-primary);
-  border: none;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
+
 
 .boton-cerrar-sesion:hover {
   background: var(--color-secondary);
@@ -1344,7 +1329,7 @@ MI CUENTA E HISTORIAL DE PEDIDOS
 
 @media (max-width: 600px) {
 
-  ``` .pagina-mi-cuenta {
+  .pagina-mi-cuenta {
     padding: 40px 5%;
   }
 
@@ -1386,5 +1371,147 @@ MI CUENTA E HISTORIAL DE PEDIDOS
     font-size: 19px;
   }
 
-  ```
+
+}
+
+/* Contenedor principal */
+.admin-pedidos {
+  min-height: 100vh;
+  padding: 40px;
+  background-color: #f8f4ed;
+  color: #49372b;
+  font-family: Arial, sans-serif;
+}
+
+/* Encabezado */
+.admin-pedidos h1 {
+  margin-bottom: 30px;
+  font-size: 30px;
+  font-weight: 700;
+  color: #49372b;
+}
+
+/* Tabla de pedidos */
+.admin-pedidos table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fffdf9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(73, 55, 43, 0.08);
+}
+
+/* Encabezados */
+.admin-pedidos thead {
+  background-color: #6b4f3f;
+  color: #ffffff;
+}
+
+.admin-pedidos th {
+  padding: 16px;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* Filas */
+.admin-pedidos td {
+  padding: 15px 16px;
+  border-bottom: 1px solid #e9dfd3;
+  font-size: 14px;
+}
+
+/* Efecto al pasar el cursor */
+.admin-pedidos tbody tr:hover {
+  background-color: #f3ece2;
+}
+
+/* Selector de estados */
+.admin-pedidos select {
+  padding: 9px 12px;
+  border: 1px solid #c8b6a5;
+  border-radius: 6px;
+  background-color: #fffdf9;
+  color: #49372b;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Mensajes */
+.admin-pedidos p {
+  margin-top: 20px;
+  color: #6b4f3f;
+}
+
+/* Diseño adaptable a dispositivos móviles */
+@media (max-width: 768px) {
+  .admin-pedidos {
+    padding: 20px 10px;
+    overflow-x: auto;
+  }
+
+  .admin-pedidos h1 {
+    font-size: 23px;
+  }
+
+  .admin-pedidos table {
+    min-width: 650px;
+  }
+}
+
+
+
+.boton-administracion:hover {
+  background-color: #6b4f3f;
+}
+
+/* Contenedor de acciones del encabezado */
+.acciones-usuario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Botón de administración */
+.boton-administracion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 0 16px;
+  background-color: #8b6b52;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.boton-administracion:hover {
+  background-color: #6b4f3f;
+}
+
+/* Botones de cerrar sesión y registro */
+.boton-cerrar-sesion,
+.boton-registro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 0 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Botón cerrar sesión */
+.boton-cerrar-sesion {
+  margin-top: 0;
+  color: white;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 7px;
+  transition: background 0.3s ease;
 }
