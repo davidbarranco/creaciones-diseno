@@ -2,6 +2,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
 
+// Dirección base de la API.
+const API_URL = "http://localhost:3000/api/v1";
+
+// Construye la URL completa para visualizar las imágenes.
+function obtenerUrlImagen(imagen) {
+    if (!imagen) return "";
+
+    // Conserva las imágenes externas.
+    if (imagen.startsWith("http://") || imagen.startsWith("https://")) {
+        return imagen;
+    }
+
+    // Obtiene el origen del servidor backend.
+    const origenServidor = new URL(API_URL).origin;
+
+    // Limpia espacios y posibles barras invertidas.
+    const rutaLimpia = imagen.trim().replace(/\\/g, "/");
+
+    // Construye la dirección completa de la imagen.
+    return `${origenServidor}/${rutaLimpia.replace(/^\/+/, "")}`;
+}
+
 function Carrito() {
     const {
         carrito,
@@ -12,10 +34,10 @@ function Carrito() {
         eliminarProducto
     } = useCarrito();
 
-
     const { autenticado } = useAuth();
     const navigate = useNavigate();
 
+    // Formatea los precios en pesos colombianos.
     function formatearPrecio(precio) {
         return precio.toLocaleString("es-CO", {
             style: "currency",
@@ -24,6 +46,7 @@ function Carrito() {
         });
     }
 
+    // Comprueba la autenticación antes de finalizar la compra.
     function finalizarCompra() {
         if (!autenticado) {
             navigate("/login");
@@ -81,8 +104,9 @@ function Carrito() {
                                         key={producto.id}
                                     >
 
+                                        {/* Imagen del producto */}
                                         <img
-                                            src={producto.imagen}
+                                            src={obtenerUrlImagen(producto.imagen)}
                                             alt={producto.nombre}
                                         />
 
@@ -180,8 +204,6 @@ function Carrito() {
 
         </main>
     );
-
-
 }
 
 export default Carrito;

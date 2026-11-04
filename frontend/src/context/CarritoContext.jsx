@@ -4,19 +4,18 @@ const CarritoContext = createContext(null);
 
 export function CarritoProvider({ children }) {
 
-
     const [carrito, setCarrito] = useState(function () {
         const carritoGuardado = localStorage.getItem("carrito");
 
         return carritoGuardado ? JSON.parse(carritoGuardado) : [];
     });
 
-    // Mantiene el carrito guardado en el navegador
+    // Mantiene el carrito guardado en el navegador.
     useEffect(function () {
         localStorage.setItem("carrito", JSON.stringify(carrito));
     }, [carrito]);
 
-    // Agrega un producto o aumenta su cantidad
+    // Agrega un producto o aumenta su cantidad.
     function agregarProducto(producto) {
         setCarrito(function (carritoActual) {
 
@@ -47,7 +46,7 @@ export function CarritoProvider({ children }) {
         });
     }
 
-    // Aumenta la cantidad de un producto
+    // Aumenta la cantidad de un producto.
     function aumentarCantidad(id) {
         setCarrito(function (carritoActual) {
             return carritoActual.map(function (item) {
@@ -63,7 +62,7 @@ export function CarritoProvider({ children }) {
         });
     }
 
-    // Disminuye la cantidad y elimina el producto si llega a cero
+    // Disminuye la cantidad y elimina el producto si llega a cero.
     function disminuirCantidad(id) {
         setCarrito(function (carritoActual) {
             return carritoActual
@@ -83,7 +82,7 @@ export function CarritoProvider({ children }) {
         });
     }
 
-    // Elimina un producto del carrito
+    // Elimina un producto del carrito.
     function eliminarProducto(id) {
         setCarrito(function (carritoActual) {
             return carritoActual.filter(function (item) {
@@ -92,17 +91,17 @@ export function CarritoProvider({ children }) {
         });
     }
 
-    // Vacía completamente el carrito
+    // Vacía completamente el carrito.
     function vaciarCarrito() {
         setCarrito([]);
     }
 
-    // Calcula la cantidad total de unidades
+    // Calcula la cantidad total de unidades.
     const cantidadProductos = carrito.reduce(function (total, item) {
         return total + item.cantidad;
     }, 0);
 
-    // Calcula el valor total del carrito
+    // Calcula el valor total del carrito.
     const totalCarrito = carrito.reduce(function (total, item) {
         return total + item.precio * item.cantidad;
     }, 0);
@@ -123,8 +122,6 @@ export function CarritoProvider({ children }) {
             {children}
         </CarritoContext.Provider>
     );
-
-
 }
 
 export function useCarrito() {

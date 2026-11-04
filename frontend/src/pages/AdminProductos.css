@@ -359,3 +359,17 @@
 
 
 }
+
+.btn-volver {
+    display: inline-block;
+    background: #70543b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 11px 17px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+    transform: translateY(-8px);
+}

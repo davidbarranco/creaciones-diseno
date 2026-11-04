@@ -1,12 +1,10 @@
-
-
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import {
     obtenerPedidos,
     actualizarEstadoPedido
 } from "../services/admin.service";
-
-
 
 function AdminPedidos() {
     const [pedidos, setPedidos] = useState([]);
@@ -55,7 +53,15 @@ function AdminPedidos() {
 
     return (
         <main className="admin-pedidos">
-            <h1>Administración de pedidos</h1>
+
+            {/* Encabezado de administración */}
+            <div className="admin-pedidos-header">
+                <h1>Administración de pedidos</h1>
+
+                <Link to="/" className="btn-volver">
+                    Volver a la página principal
+                </Link>
+            </div>
 
             {error && <p role="alert">{error}</p>}
 

@@ -8,6 +8,25 @@ import "./App.css";
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
 
+// Construye la dirección completa de las imágenes almacenadas en el backend.
+function obtenerUrlImagen(imagen) {
+  if (!imagen) return "";
+
+  // Conserva las imágenes externas.
+  if (imagen.startsWith("http://") || imagen.startsWith("https://")) {
+    return imagen;
+  }
+
+  // Obtiene el origen del servidor backend.
+  const origenServidor = new URL(API_URL).origin;
+
+  // Limpia posibles espacios incorrectos en las rutas.
+  const rutaLimpia = imagen.trim().replace(/\s*\/\s*/g, "/");
+
+  // Construye la dirección completa de la imagen.
+  return `${origenServidor}/${rutaLimpia.replace(/^\/+/, "")}`;
+}
+
 function App() {
   const { usuario, autenticado, logout } = useAuth();
   const { agregarProducto, cantidadProductos } = useCarrito();
@@ -90,12 +109,21 @@ function App() {
 
             {/* Acceso exclusivo para administradores */}
             {usuario.rol === "ADMIN" && (
-              <Link
-                to="/admin/pedidos"
-                className="boton-administracion"
-              >
-                Administración
-              </Link>
+              <>
+                <Link
+                  to="/admin/pedidos"
+                  className="boton-administracion"
+                >
+                  Administrar pedidos
+                </Link>
+
+                <Link
+                  to="/admin/productos"
+                  className="boton-administracion"
+                >
+                  Administrar productos
+                </Link>
+              </>
             )}
 
             <button
@@ -246,10 +274,14 @@ function App() {
                   <div className="producto-imagen">
                     <img
                       src={
-                        producto.imagen ||
-                        "https://placehold.co/700x700?text=Producto"
+                        producto.imagen
+                          ? obtenerUrlImagen(producto.imagen)
+                          : "https://placehold.co/700x700?text=Producto"
                       }
                       alt={producto.nombre}
+                      onError={function (evento) {
+                        evento.target.src = "https://placehold.co/700x700?text=Producto";
+                      }}
                     />
 
                     <span className="producto-etiqueta">

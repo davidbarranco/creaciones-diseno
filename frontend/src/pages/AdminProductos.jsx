@@ -32,29 +32,32 @@ const FORMULARIO_INICIAL = {
 };
 
 // Construir la URL completa para mostrar imágenes almacenadas en el servidor.
+// Construye la URL correcta para mostrar las imágenes de los productos.
+// Construye la URL completa para mostrar las imágenes de los productos.
 function obtenerUrlImagen(imagen) {
-    if (!imagen) {
-        return "";
-    }
+    if (!imagen) return "";
 
-    // Mantener las URL externas y las vistas previas temporales.
+    const rutaImagen = imagen.trim();
+
+    // Conserva las imágenes externas y las vistas previas locales.
     if (
-        imagen.startsWith("http") ||
-        imagen.startsWith("blob:")
+        rutaImagen.startsWith("http://") ||
+        rutaImagen.startsWith("https://") ||
+        rutaImagen.startsWith("blob:") ||
+        rutaImagen.startsWith("data:")
     ) {
-        return imagen;
+        return rutaImagen;
     }
 
-    // Obtener la dirección base del backend.
-    const apiUrl =
-        import.meta.env.VITE_API_URL ||
-        "http://localhost:3000/api/v1";
-
-    // Obtener únicamente el origen del servidor.
+    // Obtiene la dirección del servidor backend.
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
     const origenServidor = new URL(apiUrl).origin;
 
-    // Construir la dirección completa de la imagen.
-    return new URL(imagen, `${origenServidor}/`).href;
+    // Elimina espacios incorrectos de las rutas antiguas.
+    const rutaLimpia = rutaImagen.replace(/\s*\/\s*/g, "/");
+
+    // Genera la URL completa de la imagen.
+    return `${origenServidor}/${rutaLimpia.replace(/^\/+/, "")}`;
 }
 
 function AdminProductos() {
@@ -382,7 +385,7 @@ function AdminProductos() {
                     </p>
                 </div>
 
-                <Link to="/admin" className="btn-volver">
+                <Link to="/" className="btn-volver">
                     Volver al panel
                 </Link>
             </header>
